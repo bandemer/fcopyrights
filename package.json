@@ -1,0 +1,16 @@
+{
+  "title": "FCopyrights",
+  "name": "fcopyrights",
+  "version": "0.0.1",
+  "description": "Store copyright infos of a Fotolia foto with one click as a text file",
+  "main": "index.js",
+  "author": "Matthias Bandemer",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "jetpack"
+  ]
+}
