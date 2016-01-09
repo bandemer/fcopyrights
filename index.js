@@ -12,24 +12,23 @@ fcopy['URL']      = '';
 fcopy['TITLE']    = '';
 fcopy['AUTHOR']   = '';
 
-var template = "Fotolia-ID: {ID}\nTitle: {TITLE}\nURL: {URL}\n\nBei redaktioneller Verwendung muss folgender Hinweis ins Impressum/in den Bildnachweis:\n\n © {AUTHOR} - Fotolia.com";
+var template = "Fotolia-ID: {ID}\n\nTitle: {TITLE}\n\nURL: {URL}\n\nBei redaktioneller Verwendung muss folgender Hinweis ins Impressum/in den Bildnachweis:\n\n© {AUTHOR} - Fotolia.com";
 
 tabs.on('ready', function(tab) {
     if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
-        
         var worker = tab.attach({
-            contentScript: "self.postMessage(document.body.innerHTML);",
             contentScriptFile: self.data.url("contentScriptFile.js"),
-            onMessage: function(data) { parseCopyrights(data, tab.url); }
         });
-        worker.port.on("getCopyrightFile", function(){ handleClick(); });
+        worker.port.on("getCopyrightFile", function(data){ handleClick(data, tab.url); });
     } 
 });
 
 /**
  * Handler for Download Click
  */
-function handleClick() {
+function handleClick(data, url) {
+
+    parseCopyrights(data, url);
 
     if (fcopy['ID'] > 0 && 
         fcopy['AUTHOR'] != '' &&
