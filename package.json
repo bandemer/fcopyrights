@@ -12,5 +12,8 @@
   "license": "MIT",
   "keywords": [
     "jetpack"
-  ]
+  ],
+  "dependencies": {
+    "menuitem": "0.0.5"
+  }
 }
