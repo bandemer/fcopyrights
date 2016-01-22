@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="data/|node_modules/menuitem/node_modules/pathfinder/lib/devtools/|node_modules/menuitem/node_modules/pathfinder/examples/test/data/|node_modules/menuitem/node_modules/pathfinder/test/|**/*.min.js|node_modules/menuitem/node_modules/pathfinder/lib/chrome/|node_modules/menuitem/node_modules/pathfinder/lib/utils/|node_modules/menuitem/node_modules/pathfinder/lib/addon/|node_modules/menuitem/node_modules/pathfinder/lib/aom/|node_modules/menuitem/|node_modules/menuitem/node_modules/pathfinder/lib/ui/findbar/|node_modules/menuitem/node_modules/pathfinder/examples/test/lib/|node_modules/menuitem/node_modules/pathfinder/lib/|node_modules/menuitem/node_modules/pathfinder/lib/ui/|**/node_modules/*|**/bower_components/*|test/|node_modules/menuitem/node_modules/pathfinder/lib/zip/|node_modules/menuitem/node_modules/pathfinder/lib/application/|node_modules/menuitem/node_modules/pathfinder/lib/content/|node_modules/menuitem/node_modules/pathfinder/lib/scriptish/|node_modules/menuitem/node_modules/pathfinder/lib/ui/sidebar/|node_modules/menuitem/test/|node_modules/menuitem/node_modules/pathfinder/data/|node_modules/menuitem/node_modules/pathfinder/lib/connection/|node_modules/menuitem/node_modules/pathfinder/lib/xul/|node_modules/menuitem/node_modules/pathfinder/lib/scheme/" kind="src" path=""/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="data"/>
+	<classpathentry excluding="node_modules/pathfinder/examples/test/lib/|node_modules/pathfinder/lib/connection/|node_modules/pathfinder/lib/addon/|node_modules/pathfinder/lib/xul/|node_modules/pathfinder/lib/aom/|node_modules/pathfinder/lib/|node_modules/pathfinder/lib/devtools/|node_modules/pathfinder/lib/zip/|node_modules/pathfinder/lib/application/|node_modules/pathfinder/lib/scheme/|**/*.min.js|**/node_modules/*|node_modules/pathfinder/lib/ui/sidebar/|node_modules/pathfinder/lib/content/|node_modules/pathfinder/examples/test/data/|**/bower_components/*|node_modules/pathfinder/data/|test/|node_modules/pathfinder/lib/scriptish/|node_modules/pathfinder/lib/utils/|node_modules/pathfinder/lib/ui/findbar/|node_modules/pathfinder/test/|node_modules/pathfinder/lib/chrome/|node_modules/pathfinder/lib/ui/" kind="src" path="node_modules/menuitem"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/data"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/examples/test/data"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/examples/test/lib"/>
+	<classpathentry excluding="zip/|ui/|chrome/|**/*.min.js|**/node_modules/*|**/bower_components/*|scriptish/|ui/sidebar/|utils/|aom/|connection/|addon/|application/|content/|xul/|scheme/|devtools/|ui/findbar/" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/addon"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/aom"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/application"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/chrome"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/connection"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/content"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/devtools"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/scheme"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/scriptish"/>
+	<classpathentry excluding="sidebar/|findbar/|**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/ui"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/ui/findbar"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/ui/sidebar"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/utils"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/xul"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/lib/zip"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/node_modules/pathfinder/test"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="node_modules/menuitem/test"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

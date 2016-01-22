@@ -2,9 +2,9 @@
  * An add-on for creating text files with copyright infos for Fotolia photos
  *
  */
-
 const tabs = require('sdk/tabs');
 const self = require('sdk/self');
+const pref = require('sdk/simple-prefs');
 
 var fcopy = new Array();
 fcopy['ID']       = 0;
@@ -16,15 +16,30 @@ var template = "Fotolia-ID: {ID}\n\nTitle: {TITLE}\n\nURL: {URL}\n\nBei redaktio
 
 tabs.on('ready', function(tab) {
     if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
-        var worker = tab.attach({
+        let worker = tab.attach({
             contentScriptFile: self.data.url("contentScriptFile.js"),
         });
         worker.port.on("getCopyrightFile", function(data){ handleClick(data, tab.url); });
     } 
 });
 
+/*
+ * Adding preference for template
+ */
+pref.on('template', function() {
+    tabs.open({
+        url: self.data.url("template.html"), 
+        onReady: function(tab) {
+            let worker = tab.attach({
+                contentScriptFile: self.data.url("contentScriptFileTemplate.js"),         
+            });
+            worker.port.on('saveTemplate', function(templateString){ console.log(templateString)});
+        }
+    });
+});
+
 /**
- * Handler for Download Click
+ * Handler for download click
  */
 function handleClick(data, url) {
 
