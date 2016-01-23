@@ -1,14 +1,20 @@
 <html>
 <head>
 <style type="text/css" media="all">
-textarea { margin: 10px; }
+body { padding:25px; }
+textarea { margin:10px 0; }
+input {float:left; margin:10px; width:80px;}
 </style>
 </head>
 <body>
 <form>
-<div>Template for file copyrights:</div>
-<div><textarea rows="13" cols="33" id="edit-box"></textarea></div>
-<div><input type="button" value="Save" id="save" onclick="clickSave();"></div>
+<div>Template for copyrights file:</div>
+<div><textarea rows="13" cols="80" id="template" onchange="document.getElementById('save').value='Save';"></textarea></div>
+<div>
+<input type="button" value="Save" id="save">
+<input type="button" value="Default" id="default">
+<input type="button" value="Exit" id="exit">
+</div>
 </form>
 </body>
 </html>

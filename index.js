@@ -5,15 +5,47 @@
 const tabs = require('sdk/tabs');
 const self = require('sdk/self');
 const pref = require('sdk/simple-prefs');
+var store  = require('sdk/simple-storage');
 
+/*
+ * Array with copyright infos
+ */
 var fcopy = new Array();
 fcopy['ID']       = 0;
 fcopy['URL']      = '';
 fcopy['TITLE']    = '';
 fcopy['AUTHOR']   = '';
 
-var template = "Fotolia-ID: {ID}\n\nTitle: {TITLE}\n\nURL: {URL}\n\nBei redaktioneller Verwendung muss folgender Hinweis ins Impressum/in den Bildnachweis:\n\n© {AUTHOR} - Fotolia.com";
+/**
+ * Template for generating copyright file
+ */
+const defaultTemplate = "Fotolia ID: {ID}\n\nTitle: {TITLE}\n\nURL: {URL}\n\nCopyright info:\n\n© {AUTHOR} - Fotolia.com";
+var template = defaultTemplate;
+if (store.storage.template) {
+    template = store.storage.template;
+}
 
+/**
+ * Adding preference for file template
+ */
+pref.on('template', function() {
+    tabs.open({
+        url: self.data.url('template.html'), 
+        onReady: function(tab) {
+            let worker = tab.attach({
+                contentScriptFile: self.data.url('contentScriptFileTemplate.js'),         
+            });
+            worker.port.on('save', function(templateString) { store.storage.template = template = templateString; });
+            worker.port.on('default', function() { worker.port.emit('setTemplate', defaultTemplate); });
+            worker.port.on('exit', function() { tab.close(); });
+            worker.port.emit('setTemplate', template);
+        }
+    });
+});
+
+/**
+ * Adding worker to tab
+ */
 tabs.on('ready', function(tab) {
     if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
         let worker = tab.attach({
@@ -23,25 +55,13 @@ tabs.on('ready', function(tab) {
     } 
 });
 
-/*
- * Adding preference for template
- */
-pref.on('template', function() {
-    tabs.open({
-        url: self.data.url("template.html"), 
-        onReady: function(tab) {
-            let worker = tab.attach({
-                contentScriptFile: self.data.url("contentScriptFileTemplate.js"),         
-            });
-            worker.port.on('saveTemplate', function(templateString){ console.log(templateString)});
-        }
-    });
-});
 
 /**
  * Handler for download click
  */
 function handleClick(data, url) {
+
+    var copyrights = template;
 
     parseCopyrights(data, url);
 
@@ -53,7 +73,7 @@ function handleClick(data, url) {
         let tempKeys = Object.keys(fcopy);
         for(let i = 0; i < tempKeys.length; i++) {
             let pattern = new RegExp("\{" + tempKeys[i] + "\}", "m");
-            template = template.replace(pattern, fcopy[tempKeys[i]]);
+            copyrights = copyrights.replace(pattern, fcopy[tempKeys[i]]);
         };
         
     } else {
@@ -83,7 +103,7 @@ function handleClick(data, url) {
         Task.spawn(function* () {
 
             let dl = yield Downloads.createDownload({
-                source: "data:text/plain;base64," + base64.encode(template, "utf-8"),
+                source: "data:text/plain;base64," + base64.encode(copyrights, "utf-8"),
                 target:  fp.file.path,
             });
 

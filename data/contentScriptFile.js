@@ -1,5 +1,5 @@
 /**
- * ContentScriptFile for modifieng Fotolia Details-Pages
+ * ContentScriptFile for adding download to fota details pages
  */
 window.addEventListener('click', function(event) {
     if (event.target.id == 'fcopyrightsdownload') {
