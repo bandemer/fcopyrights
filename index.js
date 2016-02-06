@@ -4,6 +4,7 @@
  */
 const tabs = require('sdk/tabs');
 const self = require('sdk/self');
+const syst = require('sdk/system');
 const pref = require('sdk/simple-prefs');
 var store  = require('sdk/simple-storage');
 
@@ -19,7 +20,11 @@ fcopy['AUTHOR']   = '';
 /**
  * Template for generating copyright file
  */
-const defaultTemplate = "Fotolia ID: {ID}\n\nTitle: {TITLE}\n\nURL: {URL}\n\nCopyright info:\n\n© {AUTHOR} - Fotolia.com";
+var nL = "\n";
+if (syst.platform == 'winnt') {
+    nL = "\r\n";
+}
+const defaultTemplate = "Fotolia ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info:"+nL+nL+"© {AUTHOR} - Fotolia.com";
 var template = defaultTemplate;
 if (store.storage.template) {
     template = store.storage.template;
@@ -35,7 +40,12 @@ pref.on('template', function() {
             let worker = tab.attach({
                 contentScriptFile: self.data.url('contentScriptFileTemplate.js'),         
             });
-            worker.port.on('save', function(templateString) { store.storage.template = template = templateString; });
+            worker.port.on('save', function(templateString) {
+                if (syst.platform == 'winnt') {
+                    templateString = templateString.replace(/\n/gm, '\r\n');
+                }            
+                store.storage.template = template = templateString; 
+            });
             worker.port.on('default', function() { worker.port.emit('setTemplate', defaultTemplate); });
             worker.port.on('exit', function() { tab.close(); });
             worker.port.emit('setTemplate', template);

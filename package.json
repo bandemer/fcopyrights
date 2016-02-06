@@ -1,23 +1,25 @@
 {
     "title": "FCopyrights",
     "name": "fcopyrights",
-    "version": "0.0.1",
-    "description": "Store copyright infos of a Fotolia foto with one click as a text file",
+    "version": "1.0.0",
+    "description": "Store copyright infos of a Fotolia photo as a text file with one single click.",
     "main": "index.js",
     "author": "Matthias Bandemer",
+    "homepage": "http://www.bandemer.net/fcopyrights/",
+    "icon": "resource://@fcopyrights/icon.png",
     "engines": {
         "firefox": ">=38.0a1",
         "fennec": ">=38.0a1"
     },
     "license": "MIT",
     "keywords": [
-        "jetpack"
+        "jetpack", "photos", "fotolia", "copyright"
     ],
     "dependencies": {        
     },
     "preferences": [{
         "name": "template",
-        "title": "Template",
+        "title": "File template",
         "description": "Template for copyrights file",
         "type": "control",
         "label": "Edit"
