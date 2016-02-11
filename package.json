@@ -1,7 +1,7 @@
 {
     "title": "FCopyrights",
     "name": "fcopyrights",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Store copyright infos of a Fotolia photo as a text file with one single click.",
     "main": "index.js",
     "author": "Matthias Bandemer",
