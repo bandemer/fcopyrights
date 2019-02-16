@@ -1,5 +1,6 @@
 .project
 .settings
+.idea
 node_modules
 npm-debug.log
 *.xpi

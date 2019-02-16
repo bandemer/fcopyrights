@@ -1,0 +1,20 @@
+{
+
+  "manifest_version": 2,
+  "name": "FCopyrights",
+  "version": "2.0",
+
+  "description": "Store copyright infos of a Adobe Stock or Fotolia photos as a text file with one single click.",
+
+  "icons": {
+    "48": "icons/icon-48.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://stock.adobe.com/de/images/*"],
+      "js": ["fcopyrights.js"]
+    }
+  ]
+
+}
