@@ -10,11 +10,13 @@
     "48": "icons/icon-48.png"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["https://stock.adobe.com/de/images/*"],
-      "js": ["fcopyrights.js"]
-    }
-  ]
+  "permissions": [
+    "activeTab",
+    "contextMenus"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  }
 
 }

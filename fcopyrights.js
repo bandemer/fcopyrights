@@ -2,11 +2,13 @@
  * An add-on for creating text files with copyright infos for Fotolia photos
  *
  */
-const tabs = require('sdk/tabs');
-const self = require('sdk/self');
-const syst = require('sdk/system');
-const pref = require('sdk/simple-prefs');
-var store  = require('sdk/simple-storage');
+
+console.log('test');
+document.body.textContent = "";
+
+var header = document.createElement('h1');
+header.textContent = "This page has been eaten";
+document.body.appendChild(header);
 
 /*
  * Array with copyright infos
@@ -21,19 +23,21 @@ fcopy['AUTHOR']   = '';
  * Template for generating copyright file
  */
 var nL = "\n";
-if (syst.platform == 'winnt') {
+/*if (syst.platform == 'winnt') {
     nL = "\r\n";
 }
+*/
 const defaultTemplate = "Fotolia ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info:"+nL+nL+"© {AUTHOR} - Fotolia.com";
 var template = defaultTemplate;
-if (store.storage.template) {
+/*if (store.storage.template) {
     template = store.storage.template;
 }
+*/
 
 /**
  * Adding preference for file template
  */
-pref.on('template', function() {
+/*pref.on('template', function() {
     tabs.open({
         url: self.data.url('template.html'), 
         onReady: function(tab) {
@@ -52,18 +56,18 @@ pref.on('template', function() {
         }
     });
 });
-
+*/
 /**
  * Adding worker to tab
  */
-tabs.on('ready', function(tab) {
-    if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
-        let worker = tab.attach({
-            contentScriptFile: self.data.url("contentScriptFile.js"),
-        });
-        worker.port.on("getCopyrightFile", function(data){ handleClick(data, tab.url); });
-    } 
-});
+//tabs.on('ready', function(tab) {
+//    if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
+//        let worker = tab.attach({
+//            contentScriptFile: self.data.url("contentScriptFile.js"),
+//        });
+//        worker.port.on("getCopyrightFile", function(data){ handleClick(data, tab.url); });
+//    }
+//});
 
 
 /**
