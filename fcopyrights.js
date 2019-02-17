@@ -3,12 +3,21 @@
  *
  */
 
-console.log('test');
-document.body.textContent = "";
+browser.contextMenus.create({
+    id: "fcopyrights",
+    title: "Get Copyright Info",
+    contexts: ["all"]
+});
 
-var header = document.createElement('h1');
-header.textContent = "This page has been eaten";
-document.body.appendChild(header);
+
+browser.contextMenus.onClicked.addListener(function(info, tab) {
+    browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
+        browser.tabs.sendMessage( tabs[0].id, {'req':'source-code'}).then( response => {
+            handleClick(response.content, tabs[0].url);
+        });
+    });
+
+});
 
 /*
  * Array with copyright infos
@@ -57,17 +66,7 @@ var template = defaultTemplate;
     });
 });
 */
-/**
- * Adding worker to tab
- */
-//tabs.on('ready', function(tab) {
-//    if (tab.url.search(/fotolia\.com\/id\/[1-9][0-9]*/) != -1) {
-//        let worker = tab.attach({
-//            contentScriptFile: self.data.url("contentScriptFile.js"),
-//        });
-//        worker.port.on("getCopyrightFile", function(data){ handleClick(data, tab.url); });
-//    }
-//});
+
 
 
 /**
@@ -77,7 +76,10 @@ function handleClick(data, url) {
 
     var copyrights = template;
 
+    console.log(url);
+
     parseCopyrights(data, url);
+    console.log(fcopy);
 
     if (fcopy['ID'] > 0 && 
         fcopy['AUTHOR'] != '' &&
@@ -93,40 +95,6 @@ function handleClick(data, url) {
     } else {
         return false;
     }
-
-    const utils = require('sdk/window/utils'),
-        base64 = require('sdk/base64'),
-        {Cc, Cu, Ci} = require("chrome");
-
-    Cu.import("resource://gre/modules/Downloads.jsm");
-    Cu.import("resource://gre/modules/osfile.jsm")
-    Cu.import("resource://gre/modules/Task.jsm");
-    
-
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var window = utils.getMostRecentBrowserWindow();
-
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-
-    fp.init(window, "Save as..", nsIFilePicker.modeSave);
-    fp.defaultString = 'Fotolia_' + fcopy['ID'] + '_Copyright.txt';
-
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-
-        Task.spawn(function* () {
-
-            let dl = yield Downloads.createDownload({
-                source: "data:text/plain;base64," + base64.encode(copyrights, "utf-8"),
-                target:  fp.file.path,
-            });
-
-            let list = yield Downloads.getList(Downloads.ALL);
-            list.add(dl);
-
-            yield Promise.all([dl.start()]);
-        });
-    }
 }
 
 /**
@@ -136,19 +104,19 @@ function parseCopyrights(data, url)
 {
     fcopy['URL'] = url;    
 
-    const idPattern = /^.+fotolia\.com\/id\/([1-9][0-9]*).*$/
+    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
     if (url.search(idPattern) != -1) {
         fcopy['ID'] = url.match(idPattern)[1];
     }
 
-    const authorPattern = /^.*<dd><a href="\/p\/[1-9][0-9]*" title="[^"]+">([^<>]+)<\/a><\/dd>.*$/mi;
+    const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        fcopy['AUTHOR'] = data.match(authorPattern)[1];
+        fcopy['AUTHOR'] = data.match(authorPattern)[1].trim();
     }
 
-	const titlePattern = /^.*<h1[^>]*>([^<>]+)<\/h1>.*$/mi;
+	const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
-        fcopy['TITLE'] = data.match(titlePattern)[1];
+        fcopy['TITLE'] = data.match(titlePattern)[1].trim();
     }
 }
 
