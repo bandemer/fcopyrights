@@ -102,7 +102,12 @@ function handleClick(data, url) {
  */
 function parseCopyrights(data, url) 
 {
-    fcopy['URL'] = url;    
+    const urlPattern = /^([^\?]+)(\?.*)?$/
+    if (url.search(urlPattern) != -1) {
+        fcopy['URL'] = url.match(urlPattern)[1];
+    } else {
+        fcopy['URL'] = url;
+    }
 
     const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
     if (url.search(idPattern) != -1) {
