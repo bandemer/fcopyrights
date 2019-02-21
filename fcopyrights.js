@@ -40,13 +40,19 @@ fcopy['author']   = '';
  * Template for generating copyright file
  */
 var nL = "\n";
-//console.log( browser.runtime.getBrowserInfo() );
-/*if (syst.platform == 'winnt') {
-    nL = "\r\n";
+
+function gotPlatformInfo(info) {
+    if (info.os == 'winnt') {
+        nL = "\r\n";
+    };
 }
-*/
-const defaultTemplate = "Fotolia ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info:"+nL+nL+"© {AUTHOR} - Fotolia.com";
+
+var gettingInfo = browser.runtime.getPlatformInfo();
+gettingInfo.then(gotPlatformInfo);
+
+const defaultTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: © {AUTHOR} - Fotolia.com";
 var template = defaultTemplate;
+
 /*if (store.storage.template) {
     template = store.storage.template;
 }
@@ -76,7 +82,6 @@ var template = defaultTemplate;
 });
 */
 
-
 /**
  * Handler for download click
  */
@@ -90,7 +95,7 @@ function handleClick(data, url)
         fcopy['author'] != '' &&
         fcopy['url'] != '' &&
         fcopy['title'] != '') {
-        
+
         let tempKeys = Object.keys(fcopy);
         for(let i = 0; i < tempKeys.length; i++) {
             let pattern = new RegExp("\{" + tempKeys[i].toUpperCase() + "\}", "m");
@@ -101,16 +106,13 @@ function handleClick(data, url)
         return false;
     }
 
-
-    var text = "ID: " + fcopy['id'] + "Author: " + fcopy['author'];
-
-    var blob = new Blob([text], { type: 'text/plain' });
+    var blob = new Blob([copyrights], { type: 'text/plain' });
 
     fcopyDownloadUrl = (window.webkitURL || window.URL).createObjectURL(blob);
 
     var downloading = browser.downloads.download({
         url : fcopyDownloadUrl,
-        filename : fcopy['ID'] + '.txt',
+        filename : fcopy['id'] + '_copyright.txt',
         saveAs: true
     });
 
@@ -124,23 +126,23 @@ function parseCopyrights(data, url)
 {
     const urlPattern = /^([^\?]+)(\?.*)?$/
     if (url.search(urlPattern) != -1) {
-        fcopy['URL'] = url.match(urlPattern)[1];
+        fcopy['url'] = url.match(urlPattern)[1];
     } else {
-        fcopy['URL'] = url;
+        fcopy['url'] = url;
     }
 
     const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
     if (url.search(idPattern) != -1) {
-        fcopy['ID'] = url.match(idPattern)[1];
+        fcopy['id'] = url.match(idPattern)[1];
     }
 
     const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        fcopy['AUTHOR'] = data.match(authorPattern)[1].trim();
+        fcopy['author'] = data.match(authorPattern)[1].trim();
     }
 
 	const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
-        fcopy['TITLE'] = data.match(titlePattern)[1].trim();
+        fcopy['title'] = data.match(titlePattern)[1].trim();
     }
 }
