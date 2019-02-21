@@ -12,7 +12,8 @@
 
   "permissions": [
     "tabs",
-    "contextMenus"
+    "contextMenus",
+    "downloads"
   ],
 
   "content_scripts": [

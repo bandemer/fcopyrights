@@ -1,37 +1,46 @@
 /**
- * An add-on for creating text files with copyright infos for Fotolia photos
+ * An add-on for creating text files with copyright infos for Stock photos
  *
  */
-
 browser.contextMenus.create({
     id: "fcopyrights",
     title: "Get Copyright Info",
     contexts: ["all"]
 });
 
-
 browser.contextMenus.onClicked.addListener(function(info, tab) {
     browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
-        browser.tabs.sendMessage( tabs[0].id, {'req':'source-code'}).then( response => {
+        browser.tabs.sendMessage( tabs[0].id, {'req':'get-source-code'}).then( response => {
             handleClick(response.content, tabs[0].url);
         });
     });
-
 });
+
+/**
+ * fcopyDownloadUrl should be revoked, after successful download
+ */
+var fcopyDownloadUrl;
+function handleDownloadsChanged(delta) {
+    if (delta.state && delta.state.current === "complete") {
+        (window.webkitURL || window.URL).revokeObjectURL(fcopyDownloadUrl);
+    }
+}
+browser.downloads.onChanged.addListener(handleDownloadsChanged);
 
 /*
  * Array with copyright infos
  */
 var fcopy = new Array();
-fcopy['ID']       = 0;
-fcopy['URL']      = '';
-fcopy['TITLE']    = '';
-fcopy['AUTHOR']   = '';
+fcopy['id']       = 0;
+fcopy['url']      = '';
+fcopy['title']    = '';
+fcopy['author']   = '';
 
 /**
  * Template for generating copyright file
  */
 var nL = "\n";
+//console.log( browser.runtime.getBrowserInfo() );
 /*if (syst.platform == 'winnt') {
     nL = "\r\n";
 }
@@ -68,33 +77,44 @@ var template = defaultTemplate;
 */
 
 
-
 /**
  * Handler for download click
  */
-function handleClick(data, url) {
-
+function handleClick(data, url)
+{
     var copyrights = template;
 
-    console.log(url);
-
     parseCopyrights(data, url);
-    console.log(fcopy);
 
-    if (fcopy['ID'] > 0 && 
-        fcopy['AUTHOR'] != '' &&
-        fcopy['URL'] != '' &&  
-        fcopy['TITLE'] != '') {
+    if (fcopy['id'] > 0 &&
+        fcopy['author'] != '' &&
+        fcopy['url'] != '' &&
+        fcopy['title'] != '') {
         
         let tempKeys = Object.keys(fcopy);
         for(let i = 0; i < tempKeys.length; i++) {
-            let pattern = new RegExp("\{" + tempKeys[i] + "\}", "m");
+            let pattern = new RegExp("\{" + tempKeys[i].toUpperCase() + "\}", "m");
             copyrights = copyrights.replace(pattern, fcopy[tempKeys[i]]);
         };
         
     } else {
         return false;
     }
+
+
+    var text = "ID: " + fcopy['id'] + "Author: " + fcopy['author'];
+
+    var blob = new Blob([text], { type: 'text/plain' });
+
+    fcopyDownloadUrl = (window.webkitURL || window.URL).createObjectURL(blob);
+
+    var downloading = browser.downloads.download({
+        url : fcopyDownloadUrl,
+        filename : fcopy['ID'] + '.txt',
+        saveAs: true
+    });
+
+    downloading.then(function(id){console.log('OK')}, function(error){console.log('error')});
 }
 
 /**
@@ -124,5 +144,3 @@ function parseCopyrights(data, url)
         fcopy['TITLE'] = data.match(titlePattern)[1].trim();
     }
 }
-
-
