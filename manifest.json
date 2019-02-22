@@ -18,7 +18,7 @@
 
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://stock.adobe.com/*/images/*"],
       "js": ["content-script.js"]
     }
   ],

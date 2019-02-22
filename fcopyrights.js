@@ -50,7 +50,7 @@ function gotPlatformInfo(info) {
 var gettingInfo = browser.runtime.getPlatformInfo();
 gettingInfo.then(gotPlatformInfo);
 
-const defaultTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: © {AUTHOR} - Fotolia.com";
+const defaultTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
 var template = defaultTemplate;
 
 /*if (store.storage.template) {
