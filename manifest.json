@@ -18,7 +18,10 @@
 
   "content_scripts": [
     {
-      "matches": ["https://stock.adobe.com/*/images/*"],
+      "matches": [
+        "https://stock.adobe.com/*/images/*",
+        "https://pixabay.com/photos/*"
+      ],
       "js": ["content-script.js"]
     }
   ],

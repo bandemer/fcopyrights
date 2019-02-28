@@ -37,7 +37,8 @@ fcopy['title']    = '';
 fcopy['author']   = '';
 
 /**
- * Template for generating copyright file
+ * Checking Platform for NewLine
+ * @type {string}
  */
 var nL = "\n";
 
@@ -50,8 +51,14 @@ function gotPlatformInfo(info) {
 var gettingInfo = browser.runtime.getPlatformInfo();
 gettingInfo.then(gotPlatformInfo);
 
-const defaultTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
-var template = defaultTemplate;
+/**
+ * Templates for generating copyright file
+ */
+const astTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
+
+const pxbTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: Image by {AUTHOR} on Pixabay";
+
+var template = '';
 
 /*if (store.storage.template) {
     template = store.storage.template;
@@ -87,9 +94,15 @@ var template = defaultTemplate;
  */
 function handleClick(data, url)
 {
-    var copyrights = template;
+    var copyrights = '';
 
-    parseCopyrights(data, url);
+    if (url.search(/^https:\/\/pixabay\.com/) != -1) {
+        copyrights = pxbTemplate;
+        parsePxbCopyrights(data, url);
+    } else if (url.search(/^https:\/\/stock\.adobe\.com/) != -1) {
+        copyrights = astTemplate;
+        parseAstCopyrights(data, url);
+    }
 
     if (fcopy['id'] > 0 &&
         fcopy['author'] != '' &&
@@ -122,7 +135,7 @@ function handleClick(data, url)
 /**
  * Parse credits out of url and html body content
  */
-function parseCopyrights(data, url) 
+function parseAstCopyrights(data, url)
 {
     const urlPattern = /^([^\?]+)(\?.*)?$/
     if (url.search(urlPattern) != -1) {
@@ -142,6 +155,34 @@ function parseCopyrights(data, url)
     }
 
 	const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
+    if (data.search(titlePattern) != -1) {
+        fcopy['title'] = data.match(titlePattern)[1].trim();
+    }
+}
+
+/**
+ * Parse credits out of url and html body content
+ */
+function parsePxbCopyrights(data, url)
+{
+    const urlPattern = /^([^\?]+)(\?.*)?$/
+    if (url.search(urlPattern) != -1) {
+        fcopy['url'] = url.match(urlPattern)[1];
+    } else {
+        fcopy['url'] = url;
+    }
+
+    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
+    if (url.search(idPattern) != -1) {
+        fcopy['id'] = url.match(idPattern)[1];
+    }
+
+    const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
+    if (data.search(authorPattern) != -1) {
+        fcopy['author'] = data.match(authorPattern)[1].trim();
+    }
+
+    const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
         fcopy['title'] = data.match(titlePattern)[1].trim();
     }
