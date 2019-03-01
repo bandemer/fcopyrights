@@ -4,7 +4,7 @@
   "name": "FCopyrights",
   "version": "2.0",
 
-  "description": "Store copyright infos of a Adobe Stock or Fotolia photos as a text file with one single click.",
+  "description": "Store copyright infos of stock photos as text file with only two clicks.",
 
   "icons": {
     "48": "icons/icon-48.png"
@@ -19,8 +19,9 @@
   "content_scripts": [
     {
       "matches": [
-        "https://stock.adobe.com/*/images/*",
-        "https://pixabay.com/photos/*"
+        "https://stock.adobe.com/*images/*",
+        "https://pixabay.com/*photos/*",
+        "https://*.fotolia.com/id/*"
       ],
       "js": ["content-script.js"]
     }

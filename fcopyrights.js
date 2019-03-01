@@ -1,6 +1,6 @@
 /**
- * An add-on for creating text files with copyright infos for Stock photos
- *
+ * WebExtension for creating text files with copyright infos for stock photos
+ * currently supports Fotolia, Adobe Stock and Pixabay
  */
 browser.contextMenus.create({
     id: "fcopyrights",
@@ -30,7 +30,7 @@ browser.downloads.onChanged.addListener(handleDownloadsChanged);
 /*
  * Array with copyright infos
  */
-var fcopy = new Array();
+var fcopy = [];
 fcopy['id']       = '';
 fcopy['url']      = '';
 fcopy['title']    = '';
@@ -54,54 +54,32 @@ gettingInfo.then(gotPlatformInfo);
 /**
  * Templates for generating copyright file
  */
-const astTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
+const astTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
 
-const pxbTemplate = "Foto ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: Image by {AUTHOR} on Pixabay";
+const pxbTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: Image by {AUTHOR} on Pixabay";
+
+const ftlTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: © {AUTHOR} - Fotolia.com";
 
 var template = '';
-
-/*if (store.storage.template) {
-    template = store.storage.template;
-}
-*/
-
-/**
- * Adding preference for file template
- */
-/*pref.on('template', function() {
-    tabs.open({
-        url: self.data.url('template.html'), 
-        onReady: function(tab) {
-            let worker = tab.attach({
-                contentScriptFile: self.data.url('contentScriptFileTemplate.js'),         
-            });
-            worker.port.on('save', function(templateString) {
-                if (syst.platform == 'winnt') {
-                    templateString = templateString.replace(/\n/gm, '\r\n');
-                }            
-                store.storage.template = template = templateString; 
-            });
-            worker.port.on('default', function() { worker.port.emit('setTemplate', defaultTemplate); });
-            worker.port.on('exit', function() { tab.close(); });
-            worker.port.emit('setTemplate', template);
-        }
-    });
-});
-*/
 
 /**
  * Handler for download click
  */
 function handleClick(data, url)
 {
+
     var copyrights = '';
 
     if (url.search(/^https:\/\/pixabay\.com/) != -1) {
         copyrights = pxbTemplate;
-        parsePxbCopyrights(data, url);
+        fcopy = parsePxbCopyrights(data, url);
     } else if (url.search(/^https:\/\/stock\.adobe\.com/) != -1) {
         copyrights = astTemplate;
-        parseAstCopyrights(data, url);
+        fcopy = parseAstCopyrights(data, url);
+    } else if (url.search(/^https:\/\/[a-z]+\.fotolia\.com/) != -1) {
+
+        copyrights = ftlTemplate;
+        fcopy = parseFtlCopyrights(data, url);
     }
 
     if (fcopy['id'] != '' &&
@@ -129,7 +107,7 @@ function handleClick(data, url)
         saveAs: true
     });
 
-    downloading.then(function(id){console.log('OK')}, function(error){console.log('error')});
+    downloading.then(function(id){ }, function(error){ });
 }
 
 /**
@@ -137,27 +115,34 @@ function handleClick(data, url)
  */
 function parseAstCopyrights(data, url)
 {
+    var rA = [];
+    rA['url']    = '';
+    rA['id']     = '';
+    rA['author'] = '';
+    rA['title']  = '';
+
     const urlPattern = /^([^\?]+)(\?.*)?$/
     if (url.search(urlPattern) != -1) {
-        fcopy['url'] = url.match(urlPattern)[1];
+        rA['url'] = url.match(urlPattern)[1];
     } else {
-        fcopy['url'] = url;
+        rA['url'] = url;
     }
 
     const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
     if (url.search(idPattern) != -1) {
-        fcopy['id'] = url.match(idPattern)[1];
+        rA['id'] = url.match(idPattern)[1];
     }
 
     const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        fcopy['author'] = data.match(authorPattern)[1].trim();
+        rA['author'] = data.match(authorPattern)[1].trim();
     }
 
 	const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
-        fcopy['title'] = data.match(titlePattern)[1].trim();
+        rA['title'] = data.match(titlePattern)[1].trim();
     }
+    return rA;
 }
 
 /**
@@ -165,25 +150,69 @@ function parseAstCopyrights(data, url)
  */
 function parsePxbCopyrights(data, url)
 {
+    var rA = [];
+    rA['url']    = '';
+    rA['id']     = '';
+    rA['author'] = '';
+    rA['title']  = '';
+
     const urlPattern = /^([^\?]+)(\?.*)?$/
     if (url.search(urlPattern) != -1) {
-        fcopy['url'] = url.match(urlPattern)[1];
+        rA['url'] = url.match(urlPattern)[1];
     } else {
-        fcopy['url'] = url;
+        rA['url'] = url;
     }
 
     const idPattern = /^.+srcset="https:\/\/cdn\.pixabay\.com\/photo\/[0-9]+\/[0-9]+\/[0-9]+\/[0-9]+\/[0-9]+\/([a-z-]+-[0-9]+)_.+$/mi;
     if (data.search(idPattern) != -1) {
-        fcopy['id'] = data.match(idPattern)[1];
+        rA['id'] = data.match(idPattern)[1];
     }
 
     const authorPattern = /^.*<a [^>]+>([a-zA-Z0-9_ \r\n-]+) \/ [0-9]+ [a-zA-Z \r\n]+<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        fcopy['author'] = data.match(authorPattern)[1].trim();
+        rA['author'] = data.match(authorPattern)[1].trim();
     }
 
     const titlePattern = /^.*<title>([0-9a-zA-ZäÄüÜöÖß -]+) - [^<]+<\/title>.*$/mi;
     if (data.search(titlePattern) != -1) {
-        fcopy['title'] = data.match(titlePattern)[1].trim();
+        rA['title'] = data.match(titlePattern)[1].trim();
     }
+
+    return rA;
+}
+
+/**
+ * Parse credits out of url and html body content
+ */
+function parseFtlCopyrights(data, url)
+{
+    var rA = [];
+    rA['url']    = '';
+    rA['id']     = '';
+    rA['author'] = '';
+    rA['title']  = '';
+
+    const urlPattern = /^([^\?]+)(\?.*)?$/
+    if (url.search(urlPattern) != -1) {
+        rA['url'] = url.match(urlPattern)[1];
+    } else {
+        rA['url'] = url;
+    }
+
+    const idPattern = /^https:\/\/[a-z]*\.fotolia\.com\/id\/([1-9][0-9]*).*$/
+    if (url.search(idPattern) != -1) {
+        rA['id'] = url.match(idPattern)[1];
+    }
+
+    const authorPattern = /^.*href="\/p\/[0-9]+">([^<]+)<\/a>.*$/mi;
+    if (data.search(authorPattern) != -1) {
+        rA['author'] = data.match(authorPattern)[1].trim();
+    }
+
+    const titlePattern = /^.*<h1 class="h-strong content-title truncate">([^<]+)<\/h1>.*$/mi;
+    if (data.search(titlePattern) != -1) {
+        rA['title'] = data.match(titlePattern)[1].trim();
+    }
+
+    return rA;
 }
