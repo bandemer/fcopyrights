@@ -31,7 +31,7 @@ browser.downloads.onChanged.addListener(handleDownloadsChanged);
  * Array with copyright infos
  */
 var fcopy = new Array();
-fcopy['id']       = 0;
+fcopy['id']       = '';
 fcopy['url']      = '';
 fcopy['title']    = '';
 fcopy['author']   = '';
@@ -104,7 +104,7 @@ function handleClick(data, url)
         parseAstCopyrights(data, url);
     }
 
-    if (fcopy['id'] > 0 &&
+    if (fcopy['id'] != '' &&
         fcopy['author'] != '' &&
         fcopy['url'] != '' &&
         fcopy['title'] != '') {
@@ -172,17 +172,17 @@ function parsePxbCopyrights(data, url)
         fcopy['url'] = url;
     }
 
-    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
-    if (url.search(idPattern) != -1) {
-        fcopy['id'] = url.match(idPattern)[1];
+    const idPattern = /^.+srcset="https:\/\/cdn\.pixabay\.com\/photo\/[0-9]+\/[0-9]+\/[0-9]+\/[0-9]+\/[0-9]+\/([a-z-]+-[0-9]+)_.+$/mi;
+    if (data.search(idPattern) != -1) {
+        fcopy['id'] = data.match(idPattern)[1];
     }
 
-    const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
+    const authorPattern = /^.*<a [^>]+>([a-zA-Z0-9_ \r\n-]+) \/ [0-9]+ [a-zA-Z \r\n]+<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
         fcopy['author'] = data.match(authorPattern)[1].trim();
     }
 
-    const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
+    const titlePattern = /^.*<title>([0-9a-zA-ZäÄüÜöÖß -]+) - [^<]+<\/title>.*$/mi;
     if (data.search(titlePattern) != -1) {
         fcopy['title'] = data.match(titlePattern)[1].trim();
     }
