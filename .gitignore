@@ -1,6 +1,7 @@
 .project
 .settings
 .idea
+web-ext-artifacts
 node_modules
 npm-debug.log
 *.xpi

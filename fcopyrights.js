@@ -43,7 +43,7 @@ fcopy['author']   = '';
 var nL = "\n";
 
 function gotPlatformInfo(info) {
-    if (info.os == 'winnt') {
+    if (info.os == 'win') {
         nL = "\r\n";
     };
 }
@@ -54,13 +54,11 @@ gettingInfo.then(gotPlatformInfo);
 /**
  * Templates for generating copyright file
  */
-const astTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: {AUTHOR} – stock.adobe.com";
+const astTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: {AUTHOR} – stock.adobe.com";
 
-const pxbTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: Image by {AUTHOR} on Pixabay";
+const pxbTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: Image by {AUTHOR} on Pixabay";
 
-const ftlTemplate = "Foto-ID: {ID}"+nL+nL+"Title: {TITLE}"+nL+nL+"URL: {URL}"+nL+nL+"Copyright info: © {AUTHOR} - Fotolia.com";
-
-var template = '';
+const ftlTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: © {AUTHOR} - Fotolia.com";
 
 /**
  * Handler for download click
@@ -87,9 +85,11 @@ function handleClick(data, url)
         fcopy['url'] != '' &&
         fcopy['title'] != '') {
 
+        fcopy['nl'] = nL;
+
         let tempKeys = Object.keys(fcopy);
         for(let i = 0; i < tempKeys.length; i++) {
-            let pattern = new RegExp("\{" + tempKeys[i].toUpperCase() + "\}", "m");
+            let pattern = new RegExp("\{" + tempKeys[i].toUpperCase() + "\}", "mg");
             copyrights = copyrights.replace(pattern, fcopy[tempKeys[i]]);
         };
         
