@@ -2,19 +2,6 @@
  * WebExtension for creating text files with copyright infos for stock photos
  * currently supports Fotolia, Adobe Stock and Pixabay
  */
-browser.contextMenus.create({
-    id: "fcopyrights",
-    title: "Get Copyright Info",
-    contexts: ["all"]
-});
-
-browser.contextMenus.onClicked.addListener(function(info, tab) {
-    browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
-        browser.tabs.sendMessage( tabs[0].id, {'req':'get-source-code'}).then( response => {
-            handleClick(response.content, tabs[0].url);
-        });
-    });
-});
 
 /**
  * fcopyDownloadUrl should be revoked, after successful download
@@ -65,7 +52,6 @@ const ftlTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{N
  */
 function handleClick(data, url)
 {
-
     var copyrights = '';
 
     if (url.search(/^https:\/\/pixabay\.com/) != -1) {
@@ -75,7 +61,6 @@ function handleClick(data, url)
         copyrights = astTemplate;
         fcopy = parseAstCopyrights(data, url);
     } else if (url.search(/^https:\/\/[a-z]+\.fotolia\.com/) != -1) {
-
         copyrights = ftlTemplate;
         fcopy = parseFtlCopyrights(data, url);
     }
@@ -216,3 +201,14 @@ function parseFtlCopyrights(data, url)
 
     return rA;
 }
+
+/**
+ * Handle click
+ */
+browser.pageAction.onClicked.addListener(() => {
+    browser.tabs.query({active: true, currentWindow: true}).then( tabs => {
+        browser.tabs.sendMessage( tabs[0].id, {'req':'get-source-code'}).then( response => {
+            handleClick(response.content, tabs[0].url);
+        });
+    });
+});
