@@ -45,8 +45,6 @@ const astTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{N
 
 const pxbTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: Image by {AUTHOR} on Pixabay";
 
-const ftlTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: © {AUTHOR} - Fotolia.com";
-
 /**
  * Handler for download click
  */
@@ -60,9 +58,6 @@ function handleClick(data, url)
     } else if (url.search(/^https:\/\/stock\.adobe\.com/) != -1) {
         copyrights = astTemplate;
         fcopy = parseAstCopyrights(data, url);
-    } else if (url.search(/^https:\/\/[a-z]+\.fotolia\.com/) != -1) {
-        copyrights = ftlTemplate;
-        fcopy = parseFtlCopyrights(data, url);
     }
 
     if (fcopy['id'] != '' &&
@@ -161,42 +156,6 @@ function parsePxbCopyrights(data, url)
     }
 
     const titlePattern = /^.*<title>([0-9a-zA-ZäÄüÜöÖß -]+) - [^<]+<\/title>.*$/mi;
-    if (data.search(titlePattern) != -1) {
-        rA['title'] = data.match(titlePattern)[1].trim();
-    }
-
-    return rA;
-}
-
-/**
- * Parse credits out of url and html body content
- */
-function parseFtlCopyrights(data, url)
-{
-    var rA = [];
-    rA['url']    = '';
-    rA['id']     = '';
-    rA['author'] = '';
-    rA['title']  = '';
-
-    const urlPattern = /^([^\?]+)(\?.*)?$/
-    if (url.search(urlPattern) != -1) {
-        rA['url'] = url.match(urlPattern)[1];
-    } else {
-        rA['url'] = url;
-    }
-
-    const idPattern = /^https:\/\/[a-z]*\.fotolia\.com\/id\/([1-9][0-9]*).*$/
-    if (url.search(idPattern) != -1) {
-        rA['id'] = url.match(idPattern)[1];
-    }
-
-    const authorPattern = /^.*href="\/p\/[0-9]+">([^<]+)<\/a>.*$/mi;
-    if (data.search(authorPattern) != -1) {
-        rA['author'] = data.match(authorPattern)[1].trim();
-    }
-
-    const titlePattern = /^.*<h1 class="h-strong content-title truncate">([^<]+)<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
