@@ -118,15 +118,17 @@ function parseAstCopyrights(data, url)
         rA['id'] = url.match(idPattern)[1];
     }
 
-    const authorPattern = /^.*<a class=".+" href=".+" data-ingest-clicktype="details-contributor-link">([^<>]+)<\/a>.*$/mi;
+    const authorPattern = /^.*<div id="image-detail-json" class="hidden">(.*)<\/div>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        rA['author'] = data.match(authorPattern)[1].trim();
+        let imgObject = JSON.parse(data.match(authorPattern)[1].trim())
+        rA['author'] = imgObject[rA['id']]["author"];
     }
 
 	const titlePattern = /^.*<h1[^>]*>[^<>]*<span[^>]*>([^<>]+)<\/span>[^<>]*<\/h1>.*$/mi;
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
+
     return rA;
 }
 
