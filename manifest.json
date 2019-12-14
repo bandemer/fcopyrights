@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "FCopyrights",
-  "version": "2.1",
+  "version": "2.2",
   "description": "Store copyright info of stock photos as text file with only two clicks.",
   "icons": {
     "48": "icons/icon-48.png",
@@ -20,7 +20,8 @@
       "matches": [
         "https://stock.adobe.com/*images/*",
         "https://pixabay.com/*photos/*",
-        "https://*.fotolia.com/id/*"
+        "https://unsplash.com/*",
+        "https://www.pexels.com/*"
       ],
       "js": ["content-script.js"]
     }
@@ -32,7 +33,8 @@
     "show_matches": [
       "https://stock.adobe.com/*images/*",
       "https://pixabay.com/*photos/*",
-      "https://*.fotolia.com/id/*"
+      "https://unsplash.com/photos/*",
+      "https://www.pexels.com/*"
     ]
   }
 }

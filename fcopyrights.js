@@ -1,6 +1,6 @@
 /**
  * WebExtension for creating text files with copyright infos for stock photos
- * currently supports Fotolia, Adobe Stock and Pixabay
+ * currently supports Adobe Stock, Pixabay, Unsplash and Pexels
  */
 
 /**
@@ -32,7 +32,7 @@ var nL = "\n";
 function gotPlatformInfo(info) {
     if (info.os == 'win') {
         nL = "\r\n";
-    };
+    }
 }
 
 var gettingInfo = browser.runtime.getPlatformInfo();
@@ -44,6 +44,10 @@ gettingInfo.then(gotPlatformInfo);
 const astTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: {AUTHOR} – stock.adobe.com";
 
 const pxbTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: Image by {AUTHOR} on Pixabay";
+
+const uspTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: Photo by {AUTHOR} on Unsplash";
+
+const pexTemplate = "Foto-ID: {ID}{NL}{NL}Title: {TITLE}{NL}{NL}URL: {URL}{NL}{NL}Copyright info: Photo by {AUTHOR} on Pexels";
 
 /**
  * Handler for download click
@@ -58,6 +62,12 @@ function handleClick(data, url)
     } else if (url.search(/^https:\/\/stock\.adobe\.com/) != -1) {
         copyrights = astTemplate;
         fcopy = parseAstCopyrights(data, url);
+    } else if (url.search(/^https:\/\/unsplash\.com/) != -1) {
+        copyrights = uspTemplate;
+        fcopy = parseUspCopyrights(data, url);
+    } else if (url.search(/^https:\/\/www\.pexels\.com/) != -1) {
+        copyrights = pexTemplate;
+        fcopy = parsePexCopyrights(data, url);
     }
 
     if (fcopy['id'] != '' &&
@@ -71,7 +81,7 @@ function handleClick(data, url)
         for(let i = 0; i < tempKeys.length; i++) {
             let pattern = new RegExp("\{" + tempKeys[i].toUpperCase() + "\}", "mg");
             copyrights = copyrights.replace(pattern, fcopy[tempKeys[i]]);
-        };
+        }
         
     } else {
         return false;
@@ -101,21 +111,21 @@ function parseAstCopyrights(data, url)
     rA['author'] = '';
     rA['title']  = '';
 
-    const urlPattern = /^([^\?]+)(\?.*)?$/
+    const urlPattern = /^([^\?]+)(\?.*)?$/;
     if (url.search(urlPattern) != -1) {
         rA['url'] = url.match(urlPattern)[1];
     } else {
         rA['url'] = url;
     }
 
-    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/
+    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/;
     if (url.search(idPattern) != -1) {
         rA['id'] = url.match(idPattern)[1];
     }
 
     const authorPattern = /^.*<div id="image-detail-json" class="hidden">(.*)<\/div>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        let imgObject = JSON.parse(data.match(authorPattern)[1].trim())
+        let imgObject = JSON.parse(data.match(authorPattern)[1].trim());
         rA['author'] = imgObject[rA['id']]["author"];
     }
 
@@ -128,7 +138,7 @@ function parseAstCopyrights(data, url)
 }
 
 /**
- * Parse credits out of url and html body content
+ * Parse Pixabay credits out of url and html body content
  */
 function parsePxbCopyrights(data, url)
 {
@@ -138,7 +148,7 @@ function parsePxbCopyrights(data, url)
     rA['author'] = '';
     rA['title']  = '';
 
-    const urlPattern = /^([^\?]+)(\?.*)?$/
+    const urlPattern = /^([^\?]+)(\?.*)?$/;
     if (url.search(urlPattern) != -1) {
         rA['url'] = url.match(urlPattern)[1];
     } else {
@@ -156,6 +166,83 @@ function parsePxbCopyrights(data, url)
     }
 
     const titlePattern = /^.*<title>([0-9a-zA-ZäÄüÜöÖß -]+) - [^<]+<\/title>.*$/mi;
+    if (data.search(titlePattern) != -1) {
+        rA['title'] = data.match(titlePattern)[1].trim();
+    }
+
+    return rA;
+}
+
+/**
+ * Parse Unsplash credits out of url and html body content
+ */
+function parseUspCopyrights(data, url)
+{
+    var rA = [];
+    rA['url']    = '';
+    rA['id']     = '';
+    rA['author'] = '';
+    rA['title']  = '';
+
+    const urlPattern = /^([^\?]+)(\?.*)?$/;
+    if (url.search(urlPattern) != -1) {
+        rA['url'] = url.match(urlPattern)[1];
+    } else {
+        rA['url'] = url;
+    }
+
+    const idPattern = /^https:\/\/unsplash\.com\/photos\/([^\/]+).*$/;
+    if (url.search(idPattern) != -1) {
+        rA['id'] = url.match(idPattern)[1];
+    }
+
+    const authorPattern = /^.*<meta [^>]*property="og:title" content="Photo by ([^"]+) on Unsplash".*$/mi;
+    if (data.search(authorPattern) != -1) {
+        rA['author'] = data.match(authorPattern)[1].trim();
+    }
+
+    const titlePattern = /^.*<meta property="og:description" content="([^"]+) Download this photo.*$/mi;
+    if (data.search(titlePattern) != -1) {
+        rA['title'] = data.match(titlePattern)[1].trim();
+    }
+
+    if (rA['title'] == '') {
+        const altTitlePattern = /^.*<title>([^<]+)–([^<]+)<\/title>.*$/mi;
+        rA['title'] = data.match(altTitlePattern)[1].trim();
+    }
+
+    return rA;
+}
+
+/**
+ * Parse Pexels credits out of url and html body content
+ */
+function parsePexCopyrights(data, url)
+{
+    var rA = [];
+    rA['url']    = '';
+    rA['id']     = '';
+    rA['author'] = '';
+    rA['title']  = '';
+
+    const urlPattern = /^([^\?]+)(\?.*)?$/;
+    if (url.search(urlPattern) != -1) {
+        rA['url'] = url.match(urlPattern)[1];
+    } else {
+        rA['url'] = url;
+    }
+
+    const idPattern = /^https:\/\/www\.pexels\.com(\/[a-z]{2}-[a-z]{2})?\/[^\/]+\/([^\/]+)\/.*$/;
+    if (url.search(idPattern) != -1) {
+        rA['id'] = url.match(idPattern)[2];
+    }
+
+    const authorPattern = /^.*<h3 class="[^"]*profile-full-name[^"]*">([^<]+)<\/h3>.*$/mi;
+    if (data.search(authorPattern) != -1) {
+        rA['author'] = data.match(authorPattern)[1].trim();
+    }
+
+    const titlePattern = /^.*<title>([^<]+)<\/title>.*$/mi;
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
