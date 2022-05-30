@@ -123,7 +123,7 @@ function parseAstCopyrights(data, url)
         rA['id'] = url.match(idPattern)[1];
     }
 
-    const authorPattern = /^.*<div id="image-detail-json" class="hidden">(.*)<\/div>.*$/mi;
+    const authorPattern = /^.*<script type="application\/json" id="image-detail-json">(.*)<\/script>.*$/mi;
     if (data.search(authorPattern) != -1) {
         let imgObject = JSON.parse(data.match(authorPattern)[1].trim());
         rA['author'] = imgObject[rA['id']]["author"];
