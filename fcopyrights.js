@@ -246,7 +246,6 @@ function parsePexCopyrights(data, url)
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
-    console.dir(rA);
     return rA;
 }
 
