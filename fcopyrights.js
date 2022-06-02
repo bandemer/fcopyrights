@@ -237,16 +237,16 @@ function parsePexCopyrights(data, url)
         rA['id'] = url.match(idPattern)[2];
     }
 
-    const authorPattern = /^.*<h3 class="[^"]*profile-full-name[^"]*">([^<]+)<\/h3>.*$/mi;
+    const authorPattern = /^.*<a( rel="[^"]*")? class="[^"]*" href="\/@([a-z0-9-]+)\/">[^<]*<h5 class="[^"]*">([^<]+)<\/h5>[^<]*<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
-        rA['author'] = data.match(authorPattern)[1].trim();
+        rA['author'] = data.match(authorPattern)[3].trim();
     }
 
-    const titlePattern = /^.*<title>([^<]+)<\/title>.*$/mi;
+    const titlePattern = /^.*<h1 class="[^"]*" title="([^"]+)">.*$/mi;
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
-
+    console.dir(rA);
     return rA;
 }
 
