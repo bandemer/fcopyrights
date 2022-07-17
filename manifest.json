@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "FCopyrights",
-  "version": "2.3",
+  "version": "2.4",
   "description": "Store copyright info of stock photos as text file with only two clicks.",
   "icons": {
     "48": "icons/icon-48.png",
