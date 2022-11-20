@@ -20,6 +20,8 @@
       "matches": [
         "https://stock.adobe.com/*images/*",
         "https://pixabay.com/*photos/*",
+        "https://pixabay.com/*vectors/*",
+        "https://pixabay.com/*illustrations/*",
         "https://unsplash.com/*",
         "https://www.pexels.com/*"
       ],
@@ -33,6 +35,8 @@
     "show_matches": [
       "https://stock.adobe.com/*images/*",
       "https://pixabay.com/*photos/*",
+      "https://pixabay.com/*vectors/*",
+      "https://pixabay.com/*illustrations/*",
       "https://unsplash.com/photos/*",
       "https://www.pexels.com/*"
     ]
