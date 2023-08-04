@@ -160,7 +160,7 @@ function parsePxbCopyrights(data, url)
         rA['id'] = data.match(idPattern)[1];
     }
 
-    const authorPattern = /^.*<a [^>]+>([a-zA-Z0-9_ \r\n-]+) \/ [0-9]+ [a-zA-Z \r\n]+<\/a>.*$/mi;
+    const authorPattern = /^.*<a[^>]+class="userName[^>]+>([a-zA-Z0-9_ \r\n-]+)<\/a>.*$/mi;
     if (data.search(authorPattern) != -1) {
         rA['author'] = data.match(authorPattern)[1].trim();
     }
@@ -169,7 +169,6 @@ function parsePxbCopyrights(data, url)
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
-
     return rA;
 }
 
