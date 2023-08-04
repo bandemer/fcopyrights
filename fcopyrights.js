@@ -118,9 +118,9 @@ function parseAstCopyrights(data, url)
         rA['url'] = url;
     }
 
-    const idPattern = /^https:\/\/stock\.adobe\.com\/[a-z]+\/images\/[^\/]+\/([1-9][0-9]*).*$/;
+    const idPattern = /^https:\/\/stock\.adobe\.com\/([a-z]+\/)?images\/[^\/]+\/([1-9][0-9]*).*$/;
     if (url.search(idPattern) != -1) {
-        rA['id'] = url.match(idPattern)[1];
+        rA['id'] = url.match(idPattern)[2];
     }
 
     const authorPattern = /^.*<script type="application\/json" id="image-detail-json">(.*)<\/script>.*$/mi;
@@ -133,7 +133,7 @@ function parseAstCopyrights(data, url)
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
-
+console.dir(rA);
     return rA;
 }
 
