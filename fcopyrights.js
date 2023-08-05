@@ -212,7 +212,7 @@ function parseUspCopyrights(data, url)
         rA['author'] = data.match(authorPattern)[2];
     }
 
-    const titlePattern = /^.*<title>([^<]+)–([^<]+)<\/title>.*$/mi;
+    const titlePattern = /^.*<title>([^<]+)<\/title>.*$/mi;
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
