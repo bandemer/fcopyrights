@@ -138,7 +138,14 @@ function parseAstCopyrights(data, url)
     if (data.search(titlePattern) != -1) {
         rA['title'] = data.match(titlePattern)[1].trim();
     }
-
+    
+    if (rA['title'] == '') {
+		const altTitlePattern = /^.*<h1[^>]*>([^<]+)<.*$/mi;
+		if (data.search(altTitlePattern) != -1) {
+	        rA['title'] = data.match(altTitlePattern)[1].trim();
+	    }
+	}
+   
     return rA;
 }
 
